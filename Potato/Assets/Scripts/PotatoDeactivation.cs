@@ -16,7 +16,7 @@ public class PotatoDeactivation : MonoBehaviour
     {
         if (canValidate)
         {
-            if (myRigidbody.velocity.magnitude < 0.1f )
+            if (myRigidbody.velocity.magnitude < 0.01f )
             {
                 Destroy(myRigidbody);
                 Destroy(this);

@@ -38,6 +38,9 @@ public class ServerCameraManager : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
+        if (collider.transform.position.y > myTransform.position.y)
+            return;
+
         UpdateCameraViewport();
         UpdateCameraLimits();
     }
@@ -59,11 +62,11 @@ public class ServerCameraManager : MonoBehaviour
         Ray ray = camera.ScreenPointToRay(new Vector3(0,0,0));
         if (Physics.Raycast(ray, out hit, 1000000))
         {
-            float colliderOffset = 0.5f;
+            float colliderOffset = 0;
 
-            //serverSocket.UpdateSpawnLimits(hit.point.x, lerpPosition.y * 4 - 1,-hit.point.x);
+            serverSocket.UpdateSpawnLimits( lerpPosition.y * 4 + 2);
             lerpPosition.y += -hit.point.y;
-            myTransform.position += new Vector3(0, -hit.point.y * 2 + colliderOffset * 2, 0);
+            myTransform.position += new Vector3(0, -hit.point.y * 2 + colliderOffset, 0);
 
             leftMargin.position = new Vector3(hit.point.x - colliderOffset, 500000, 0);
             rightMargin.position = new Vector3(-hit.point.x + colliderOffset , 500000, 0);

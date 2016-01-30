@@ -61,7 +61,7 @@ public class ServerCameraManager : MonoBehaviour
         {
             float colliderOffset = 0.5f;
 
-            serverSocket.UpdateSpawnLimits(hit.point.x, -hit.point.x);
+            //serverSocket.UpdateSpawnLimits(hit.point.x, lerpPosition.y * 4 - 1,-hit.point.x);
             lerpPosition.y += -hit.point.y;
             myTransform.position += new Vector3(0, -hit.point.y * 2 + colliderOffset * 2, 0);
 

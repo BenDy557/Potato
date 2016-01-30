@@ -22,13 +22,17 @@ public class SocketComm : MonoBehaviour
     public GameObject potatoPrefab;
     private List<Socket> clients = null; // Only Initialize It If It's The Server
     private int potatoesToSpawn = 0;
-    private Vector2 limits;
+    private Vector3 limits;
 
     /// <summary>
     /// Socket Initialization Place Any Other Code Before the Socket Initialization
     /// </summary>
     private void Start()
     {
+        limits.x = -4;
+        limits.y =  2;
+        limits.z =  4;
+
         if (socketBehaviour == ESocketBehaviour.Server)
         {
             clients = new List<Socket>();
@@ -67,16 +71,16 @@ public class SocketComm : MonoBehaviour
         {
             if (potatoesToSpawn > 0)
             {
-                Vector3 position = new Vector3(UnityEngine.Random.Range(limits.x, limits.y), 4.5f, 0);
-                Instantiate(potatoPrefab, position, Quaternion.identity);
+                Vector3 position = new Vector3(UnityEngine.Random.Range(limits.x, limits.z),limits.y, 0);
+                Quaternion startRotation = Quaternion.Euler(new Vector3(0, 0, UnityEngine.Random.Range(0, 360)));
+                Instantiate(potatoPrefab, position, startRotation);
                 potatoesToSpawn--;
             }
         }
 
         if (socketBehaviour == ESocketBehaviour.Client)
         {
-			Touch[] touches = Input.touches;
-            if (touches[0].phase == TouchPhase.Ended || Input.GetKeyUp(KeyCode.Mouse0))
+            if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 buffer[0] = 1; // Instantiate Message
                 mySocket.Send(buffer, SocketFlags.None);
@@ -106,10 +110,11 @@ public class SocketComm : MonoBehaviour
         }
     }
 
-    public void UpdateSpawnLimits(float x, float y)
+    public void UpdateSpawnLimits(float x, float y, float z)
     {
         limits.x = x;
         limits.y = y;
+        limits.z = z;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -75,7 +75,8 @@ public class SocketComm : MonoBehaviour
 
         if (socketBehaviour == ESocketBehaviour.Client)
         {
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+			Touch[] touches = Input.touches;
+            if (touches[0].phase == TouchPhase.Ended || Input.GetKeyUp(KeyCode.Mouse0))
             {
                 buffer[0] = 1; // Instantiate Message
                 mySocket.Send(buffer, SocketFlags.None);

@@ -24,13 +24,15 @@ public class SocketComm : MonoBehaviour
     private int potatoesToSpawn = 0;
     private Vector3 limits;
 
+    private bool isFocused = true;
+
     /// <summary>
     /// Socket Initialization Place Any Other Code Before the Socket Initialization
     /// </summary>
     private void Start()
     {
         limits.x = -4;
-        limits.y =  2;
+        limits.y =  4;
         limits.z =  4;
 
         if (socketBehaviour == ESocketBehaviour.Server)
@@ -71,7 +73,7 @@ public class SocketComm : MonoBehaviour
         {
             if (potatoesToSpawn > 0)
             {
-                Vector3 position = new Vector3(UnityEngine.Random.Range(limits.x, limits.z),limits.y, 0);
+                Vector3 position = new Vector3(UnityEngine.Random.Range(limits.x, limits.z), limits.y, 0);
                 Quaternion startRotation = Quaternion.Euler(new Vector3(0, 0, UnityEngine.Random.Range(0, 360)));
                 Instantiate(potatoPrefab, position, startRotation);
                 potatoesToSpawn--;
@@ -82,8 +84,7 @@ public class SocketComm : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                buffer[0] = 1; // Instantiate Message
-                mySocket.Send(buffer, SocketFlags.None);
+                RequestPotatoCreation();
             }
         }
     }
@@ -110,11 +111,37 @@ public class SocketComm : MonoBehaviour
         }
     }
 
-    public void UpdateSpawnLimits(float x, float y, float z)
+    // Controls The Bugs On Minimizing And Focusing
+    private void OnApplicationFocus()
     {
-        limits.x = x;
+        if (socketBehaviour == ESocketBehaviour.Client)
+        {
+            isFocused = !isFocused;
+
+            if (!isFocused) // Lost focus
+            {
+
+
+                mySocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+                mySocket.Connect(IPAddress.Parse(IP), port);
+            }
+            else // is focused
+            {
+                buffer[0] = 0; // Quit Message
+                mySocket.Send(buffer, SocketFlags.None);
+                mySocket.Close();
+            }
+        }
+    }
+    public void UpdateSpawnLimits( float y )
+    {
         limits.y = y;
-        limits.z = z;
+    }
+    public void RequestPotatoCreation()
+    {
+        buffer[0] = 1; // Instantiate Message
+        mySocket.Send(buffer, SocketFlags.None);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -163,5 +190,4 @@ public class SocketComm : MonoBehaviour
         // Returns Back To Receiving
         socket.BeginReceive(buffer, 0, 1024, SocketFlags.None, new AsyncCallback(ReceiveCallback), socket);
     }
-
 }

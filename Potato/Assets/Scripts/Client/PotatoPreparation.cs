@@ -12,7 +12,7 @@ public class PotatoPreparation : MonoBehaviour {
     private bool m_ReadyToPeel;
     private bool m_ReadyToSend;
 
-    private Animator m_PeelAnimator;
+    public  Animator m_PeelAnimator;
 
     private bool m_SendingPotato;
     private float m_TransitionSpeed;
@@ -29,7 +29,7 @@ public class PotatoPreparation : MonoBehaviour {
 
         m_Socket = GameObject.FindGameObjectWithTag("Client").GetComponent<SocketComm>();
 
-        m_PeelAnimator = m_UnpeeledPotato.GetComponent<Animator>();
+        //m_PeelAnimator = m_UnpeeledPotato.GetComponent<Animator>();
         m_PeelAnimator.speed = 0;
 	}
 	
@@ -46,6 +46,7 @@ public class PotatoPreparation : MonoBehaviour {
                 {
                     m_PeelAnimator.speed=1;
                     //m_ReadyToPeel = true;
+                   
                     if (m_PeelAnimator.GetCurrentAnimatorStateInfo(0).IsName("Peel9") && m_PeelAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.9f)
                     {
                         m_PeelAnimator.speed = 0;
@@ -65,13 +66,14 @@ public class PotatoPreparation : MonoBehaviour {
             {
                 if (m_UnpeeledPotato)
                 {
-                    m_PeelAnimator.speed = 0;
+                   //m_PeelAnimator.speed = 0;
                 }
 
                 if (m_PeeledPotato && m_ReadyToSend)
                 {
                     m_Socket.RequestPotatoCreation();
                     m_SendingPotato = true;
+                    m_ReadyToSend = false;
                 }
 
                 if (m_PeelAnimator)
@@ -87,9 +89,12 @@ public class PotatoPreparation : MonoBehaviour {
                 }
             }
         }
-        else if (m_PeelAnimator)
+        else if (m_PeelAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.95f)
         {
+            
+            m_PeelAnimator.SetTrigger("StartPeel");
             m_PeelAnimator.speed = 0;
+            //Finish animation
         }
 
 

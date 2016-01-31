@@ -19,7 +19,9 @@ public class SocketComm : MonoBehaviour
     private byte[] buffer;
 
     [Header("Server Variables")] // Server Variables
-    public GameObject potatoPrefab;
+    public GameObject[] potatoPrefab;
+    public Gradient potatoGradient;
+    public AudioClip audioClip;
     private List<Socket> clients = null; // Only Initialize It If It's The Server
     private int potatoesToSpawn = 0;
     private Vector3 limits;
@@ -34,6 +36,8 @@ public class SocketComm : MonoBehaviour
         limits.x = -4;
         limits.y =  4;
         limits.z =  4;
+
+        AudioManager.Instance.PlaySound(EAudioPlayType.BGM, audioClip);
 
         if (socketBehaviour == ESocketBehaviour.Server)
         {
@@ -75,16 +79,15 @@ public class SocketComm : MonoBehaviour
             {
                 Vector3 position = new Vector3(UnityEngine.Random.Range(limits.x, limits.z), limits.y, 0);
                 Quaternion startRotation = Quaternion.Euler(new Vector3(0, 0, UnityEngine.Random.Range(0, 360)));
-                Instantiate(potatoPrefab, position, startRotation);
-                potatoesToSpawn--;
-            }
-        }
+                GameObject obj = ((GameObject)Instantiate(potatoPrefab[ UnityEngine.Random.Range(0, potatoPrefab.Length-1) ], position, startRotation));
+                obj.GetComponent<SpriteRenderer>().color = potatoGradient.Evaluate(UnityEngine.Random.Range(0, 100) / 100);
+                obj.GetComponent<PotatoDeactivation>().PlaySound(EAudioPlayType.SFXPotatoSpawn);
 
-        if (socketBehaviour == ESocketBehaviour.Client)
-        {
-            if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                RequestPotatoCreation();
+
+                /// Remove this else to break the game and make an infinite spawner. leave the -- parth though please!
+                if (potatoesToSpawn > 5)
+                    potatoesToSpawn = 0;
+                else potatoesToSpawn--;
             }
         }
     }

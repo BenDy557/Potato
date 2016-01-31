@@ -28,7 +28,9 @@ public class SocketComm : MonoBehaviour
     private Vector3 limits;
 
     private bool isFocused = true;
-    private bool toPototatoeFountainOrNotToPotatoeFountain = true;
+    private bool toPototatoeFountainOrNotToPotatoeFountain = false;
+
+    private bool canSpawn = true;
 
     /// <summary>
     /// Socket Initialization Place Any Other Code Before the Socket Initialization
@@ -36,7 +38,7 @@ public class SocketComm : MonoBehaviour
     private void Start()
     {
         limits.x = -4;
-        limits.y =  4;
+        limits.y =  8;
         limits.z =  4;
 
         AudioManager.Instance.PlaySound(EAudioPlayType.BGM, audioClip);
@@ -64,12 +66,6 @@ public class SocketComm : MonoBehaviour
         if (socketBehaviour == ESocketBehaviour.Client)
         {
             buffer = new byte[1];
-
-            mySocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-            mySocket.Connect(IPAddress.Parse(IP), port);
-
-            return;
         }
     }
 
@@ -82,6 +78,12 @@ public class SocketComm : MonoBehaviour
         {
             if (potatoesToSpawn > 0)
             {
+                if (potatoesToSpawn > 5)
+                {
+                    potatoesToSpawn = 0;
+                    return;
+                }
+
                 Vector3 position = new Vector3(UnityEngine.Random.Range(limits.x, limits.z), limits.y, 0);
                 Quaternion startRotation = Quaternion.Euler(new Vector3(0, 0, UnityEngine.Random.Range(0, 360)));
                 GameObject obj = ((GameObject)Instantiate(potatoPrefab[ UnityEngine.Random.Range(0, potatoPrefab.Length-1) ], position, startRotation));
@@ -96,23 +98,6 @@ public class SocketComm : MonoBehaviour
                     potatoesToSpawn = 0;
                 else potatoesToSpawn--;
             }
-        }
-
-        if (socketBehaviour == ESocketBehaviour.Client)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                if (mySocket == null)
-                    Debug.LogError("done fucked it man! D:");
-                RequestPotatoCreation();
-            }
-
-            //Touch[] touches = Input.touches;
-            //if (touches.Length > 0)
-            //{
-            //    if ( && touches[0])
-            //    RequestPotatoCreation();
-            //}
         }
     }
 
@@ -136,6 +121,19 @@ public class SocketComm : MonoBehaviour
             }
             mySocket.Close();
         }
+    }
+
+    private void OpenClientSocket()
+    {
+        mySocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        mySocket.Connect(IPAddress.Parse(IP), port);
+    }
+
+    private void CloseClientSocket()
+    {
+        buffer[0] = 0; // Quit Message
+        mySocket.Send(buffer, SocketFlags.None);
+        mySocket.Close();
     }
 
     // Controls The Bugs On Minimizing And Focusing
@@ -167,10 +165,22 @@ public class SocketComm : MonoBehaviour
     }
     public void RequestPotatoCreation()
     {
-        if (buffer == null)
-            buffer = new byte[1];
-        buffer[0] = 1; // Instantiate Message
-        mySocket.Send(buffer, SocketFlags.None);
+        if (canSpawn)
+        {
+            if (buffer == null)
+                buffer = new byte[1];
+
+            //OpenClientSocket();
+
+            buffer[0] = 1; // Instantiate Message
+            mySocket.Send(buffer, SocketFlags.None);
+
+            canSpawn = false;
+
+            //CloseClientSocket();
+
+            StartCoroutine(WaitPlease(2));
+        }
     }
 
     private IEnumerator POTATOFOUNTAIN()
@@ -187,6 +197,11 @@ public class SocketComm : MonoBehaviour
 
             yield return new WaitForSeconds(0.1f);
         }
+    }
+    private IEnumerator WaitPlease(float f)
+    {
+        yield return new WaitForSeconds(f);
+        canSpawn = true;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -222,7 +237,7 @@ public class SocketComm : MonoBehaviour
         // Gets Bytes Received
         socket.EndReceive(asyncResult);
 
-        if (buffer[0] == 0)
+        if (buffer[0] != 1)
         {
             clients.Remove(socket);
             socket.Close();

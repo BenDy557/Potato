@@ -7,8 +7,12 @@ public class PotatoDeactivation : MonoBehaviour
     private bool canValidate = false;
     private bool canPlay = true;
 
+    [SerializeField]
+    private ServerCameraManager cam;
+
     [SerializeField] private AudioClip[] hitClips;
     [SerializeField] private AudioClip[] spawnClips;
+
 
     private void Start()
     {
@@ -20,8 +24,12 @@ public class PotatoDeactivation : MonoBehaviour
     {
         if (canValidate)
         {
-            if (myRigidbody.velocity.magnitude < 0.01f )
+            if (myRigidbody.velocity.magnitude < 0.001f )
             {
+                if ( ServerCameraManager.Instance.transform.position.y < transform.position.y )
+                {
+                    ServerCameraManager.Instance.ForceUpdate();
+                }
                 Destroy(myRigidbody);
                 Destroy(this);
             }

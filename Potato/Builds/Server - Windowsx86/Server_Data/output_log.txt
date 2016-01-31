@@ -1,10 +1,3 @@
-Mono path[0] = 'D:/Projects/Unity/Repositories/Potatov2/Potato/Builds/Server - Windowsx86/Server_Data/Managed'
-Mono path[1] = 'D:/Projects/Unity/Repositories/Potatov2/Potato/Builds/Server - Windowsx86/Server_Data/Mono'
-Mono config path = 'D:/Projects/Unity/Repositories/Potatov2/Potato/Builds/Server - Windowsx86/Server_Data/Mono/etc'
-PlayerConnection initialized from D:/Projects/Unity/Repositories/Potatov2/Potato/Builds/Server - Windowsx86/Server_Data (debug = 0)
-PlayerConnection initialized network socket : 0.0.0.0 55116
-Multi-casting "[IP] 192.168.2.10 [Port] 55116 [Flags] 2 [Guid] 149898864 [EditorId] 1930082621 [Version] 1048832 [Id] WindowsPlayer(DESKTOP-MKO8UI4) [Debug] 0" to [225.0.0.222:54997]...
-PlayerConnection already initialized - listening to [192.168.2.10:55116]
 Initialize engine version: 5.3.1f1 (cc9cbbcc37b4)
 GfxDevice: creating device client; threaded=1
 Direct3D:
@@ -21,14 +14,14 @@ Platform assembly: D:\Projects\Unity\Repositories\Potatov2\Potato\Builds\Server 
 Loading D:\Projects\Unity\Repositories\Potatov2\Potato\Builds\Server - Windowsx86\Server_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
 Platform assembly: D:\Projects\Unity\Repositories\Potatov2\Potato\Builds\Server - Windowsx86\Server_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
 Loading D:\Projects\Unity\Repositories\Potatov2\Potato\Builds\Server - Windowsx86\Server_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
-- Completed reload, in  0.048 seconds
+Platform assembly: D:\Projects\Unity\Repositories\Potatov2\Potato\Builds\Server - Windowsx86\Server_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading D:\Projects\Unity\Repositories\Potatov2\Potato\Builds\Server - Windowsx86\Server_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: D:\Projects\Unity\Repositories\Potatov2\Potato\Builds\Server - Windowsx86\Server_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading D:\Projects\Unity\Repositories\Potatov2\Potato\Builds\Server - Windowsx86\Server_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+- Completed reload, in  0.044 seconds
 Platform assembly: D:\Projects\Unity\Repositories\Potatov2\Potato\Builds\Server - Windowsx86\Server_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: D:\Projects\Unity\Repositories\Potatov2\Potato\Builds\Server - Windowsx86\Server_Data\Managed\System.dll (this message is harmless)
 <RI> Initializing input.
 <RI> Input initialized.
 desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
 <RI> Initialized touch support.
-UnloadTime: 0.667654 ms
-Setting up 2 worker threads for Enlighten.
-  Thread -> id: 496c -> priority: 1 
-  Thread -> id: 2e8c -> priority: 1 

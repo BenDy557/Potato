@@ -4,6 +4,7 @@ using System;
 using System.Net.Sockets;
 using System.Net;
 using System.Collections.Generic;
+using System.Collections;
 
 public enum ESocketBehaviour { None, Server, Client }
 
@@ -27,6 +28,7 @@ public class SocketComm : MonoBehaviour
     private Vector3 limits;
 
     private bool isFocused = true;
+    private bool toPototatoeFountainOrNotToPotatoeFountain = true;
 
     /// <summary>
     /// Socket Initialization Place Any Other Code Before the Socket Initialization
@@ -38,6 +40,9 @@ public class SocketComm : MonoBehaviour
         limits.z =  4;
 
         AudioManager.Instance.PlaySound(EAudioPlayType.BGM, audioClip);
+
+        if (toPototatoeFountainOrNotToPotatoeFountain)
+        { StartCoroutine(POTATOFOUNTAIN()); } 
 
         if (socketBehaviour == ESocketBehaviour.Server)
         {
@@ -80,8 +85,10 @@ public class SocketComm : MonoBehaviour
                 Vector3 position = new Vector3(UnityEngine.Random.Range(limits.x, limits.z), limits.y, 0);
                 Quaternion startRotation = Quaternion.Euler(new Vector3(0, 0, UnityEngine.Random.Range(0, 360)));
                 GameObject obj = ((GameObject)Instantiate(potatoPrefab[ UnityEngine.Random.Range(0, potatoPrefab.Length-1) ], position, startRotation));
-                obj.GetComponent<SpriteRenderer>().color = potatoGradient.Evaluate(UnityEngine.Random.Range(0, 100) / 100);
+                obj.GetComponent<SpriteRenderer>().color = potatoGradient.Evaluate(UnityEngine.Random.Range(0f,1f));
                 obj.GetComponent<PotatoDeactivation>().PlaySound(EAudioPlayType.SFXPotatoSpawn);
+                float scale = UnityEngine.Random.Range(0.18f, 0.30f);
+                obj.GetComponent<Transform>().localScale = new Vector3(scale, scale, scale);
 
 
                 /// Remove this else to break the game and make an infinite spawner. leave the -- parth though please!
@@ -89,6 +96,23 @@ public class SocketComm : MonoBehaviour
                     potatoesToSpawn = 0;
                 else potatoesToSpawn--;
             }
+        }
+
+        if (socketBehaviour == ESocketBehaviour.Client)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (mySocket == null)
+                    Debug.LogError("done fucked it man! D:");
+                RequestPotatoCreation();
+            }
+
+            //Touch[] touches = Input.touches;
+            //if (touches.Length > 0)
+            //{
+            //    if ( && touches[0])
+            //    RequestPotatoCreation();
+            //}
         }
     }
 
@@ -143,8 +167,26 @@ public class SocketComm : MonoBehaviour
     }
     public void RequestPotatoCreation()
     {
+        if (buffer == null)
+            buffer = new byte[1];
         buffer[0] = 1; // Instantiate Message
         mySocket.Send(buffer, SocketFlags.None);
+    }
+
+    private IEnumerator POTATOFOUNTAIN()
+    {
+        while (true)
+        {
+            Vector3 position = new Vector3(UnityEngine.Random.Range(limits.x, limits.z), limits.y, 0);
+            Quaternion startRotation = Quaternion.Euler(new Vector3(0, 0, UnityEngine.Random.Range(0, 360)));
+            GameObject obj = ((GameObject)Instantiate(potatoPrefab[UnityEngine.Random.Range(0, potatoPrefab.Length - 1)], position, startRotation));
+            obj.GetComponent<SpriteRenderer>().color = potatoGradient.Evaluate(UnityEngine.Random.Range(0f, 1f));
+            obj.GetComponent<PotatoDeactivation>().PlaySound(EAudioPlayType.SFXPotatoSpawn);
+            float scale = UnityEngine.Random.Range(0.18f, 0.30f);
+            obj.GetComponent<Transform>().localScale = new Vector3(scale, scale, scale);
+
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

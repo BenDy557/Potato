@@ -14,8 +14,12 @@ public class ServerCameraManager : MonoBehaviour
 
     private Transform myTransform;
 
+    public static ServerCameraManager Instance; // lazy singleton
+
     private void Start()
     {
+        Instance = this;
+
         camera = Camera.main;
         cameraTransform = camera.GetComponent<Transform>();
 
@@ -38,9 +42,15 @@ public class ServerCameraManager : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.transform.position.y > myTransform.position.y)
+        if (collider.transform.position.y + 1f > myTransform.position.y)
             return;
 
+        UpdateCameraViewport();
+        UpdateCameraLimits();
+    }
+
+    public void ForceUpdate()
+    {
         UpdateCameraViewport();
         UpdateCameraLimits();
     }

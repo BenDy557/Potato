@@ -26,37 +26,18 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void Start()
+    public void PlaySound(EAudioPlayType audioPlayType, AudioClip clip)
     {
         if (!sfxspawn)
         {
             sfxspawn = gameObject.AddComponent<AudioSource>();
+            sfxspawn.volume = 0.20f;
         }
 
-        if (!sfxspawn)
-        {
-            sfxhit = gameObject.AddComponent<AudioSource>();
-        }
-
-        if (!bgm)
-        {
-            bgm = gameObject.AddComponent<AudioSource>();
-        }
-
-        transform.parent = Camera.main.transform;
-        transform.localPosition = Vector3.zero;
-    }
-
-    public void PlaySound(EAudioPlayType audioPlayType, AudioClip clip)
-    {
         if (!sfxhit)
         {
             sfxhit = gameObject.AddComponent<AudioSource>();
-        }
-
-        if (!sfxspawn)
-        {
-            sfxhit = gameObject.AddComponent<AudioSource>();
+            sfxhit.volume = 0.10f;
         }
 
         if (!bgm)
@@ -71,19 +52,19 @@ public class AudioManager : MonoBehaviour
                 {
                     sfxspawnbool = !sfxspawnbool;
                     sfxspawn.clip = clip;
-                    sfxspawn.Play();
-                    StartCoroutine(WaitTill(audioPlayType, clip.length));
+                    //sfxspawn.Play();
+                    StartCoroutine(WaitTill(audioPlayType, 2));
                 }
                 break;
             case EAudioPlayType.SFXPotatoHit:
-                //if (!sfxhitbool)
-                //{
-                    //sfxhitbool = !sfxhitbool;
+                if (!sfxhitbool)
+                {
+                    sfxhitbool = !sfxhitbool;
                     sfxhit.clip = clip;
                     sfxhit.Play();
-                    //StartCoroutine(WaitTill(audioPlayType, clip.length));
-                //}
-                break;
+                    StartCoroutine(WaitTill(audioPlayType, 0.1f));
+                }
+        break;
             case EAudioPlayType.BGM:
                 if (!bgmbool)
                 {
@@ -108,7 +89,7 @@ public class AudioManager : MonoBehaviour
                 sfxspawnbool = !sfxspawnbool;
                 break;
             case EAudioPlayType.SFXPotatoHit:
-                sfxhitbool = !sfxhitbool;
+                sfxhitbool = false;
                 break;
             case EAudioPlayType.BGM:
                 bgmbool = !bgmbool;

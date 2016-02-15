@@ -12,6 +12,10 @@ public class PotatoPreparation : MonoBehaviour {
     private bool m_ReadyToSend;
 
     public  Animator m_PeelAnimator;
+    public AnimationCurve m_SpawnCurve;
+    private bool m_IsSpawning;
+    public float m_SpawnTimer;
+    private float m_SpawnTimerCurrent;
 
     private bool m_SendingPotato;
     public float m_TransitionSpeed;
@@ -45,72 +49,96 @@ public class PotatoPreparation : MonoBehaviour {
 		audioSource = gameObject.AddComponent<AudioSource>();
 		audioSource.clip = spawnSounds[ Random.Range(0, spawnSounds.Length-1)];
 		audioSource.Play(   );
+
+        m_SpawnTimerCurrent = m_SpawnTimer;
+        m_IsSpawning = true;
+        transform.localScale = Vector3.zero;
 	}
 	
 	// Update is called once per frame
 	private void Update () 
-	{	
-		GetTouchMove();
+	{
+        if (!m_IsSpawning)
+        {
 
-		if( m_SendingPotato && Input.touches.Length == 0 )
-		{
-			touchBeenReset = true;
-		}
+            GetTouchMove();
 
-		if (!m_SendingPotato) 
-		{
-			m_PeelAnimator.SetBool("RestartPeeling", false);
+            if (m_SendingPotato && Input.touches.Length == 0)
+            {
+                touchBeenReset = true;
+            }
 
-
-			if (isMoving) 
-			{
-				m_PeelAnimator.speed = 1;
-
-				if(!audioSource.isPlaying)
-				{
-					audioSource.clip = peelSounds[ Random.Range(0, peelSounds.Length-1) ];
-					audioSource.Play(  );
-				}
-			}
-		} else 
-		{
-
-			//if(isGracePeriodFinished)
-			//{
-			if(touchBeenReset)
-			{
-				if(isMoving)
-				{
-					sendAnimation = true;
-				}
-
-				if(sendAnimation)
-				{
-					if(m_ReadyToSend)
-					{
-						m_ReadyToSend = false;
+            if (!m_SendingPotato)
+            {
+                m_PeelAnimator.SetBool("RestartPeeling", false);
 
 
-						audioSource.clip = sendSounds[ Random.Range(0, sendSounds.Length-1) ];
-						audioSource.Play(  );
-					}
-					
-					transform.position += new Vector3(0.0f, m_TransitionSpeed * Time.deltaTime, 0.0f);
-					
-					if (transform.position.y > 20.0f)
-					{
-						m_SendingPotato = false;
-						m_PeelAnimator.SetBool("RestartPeeling", true);
-						m_PeelAnimator.SetBool("StartPeeling", true);
+                if (isMoving)
+                {
+                    m_PeelAnimator.speed = 1;
 
-						m_clientComm.CreatePotato();
+                    if (!audioSource.isPlaying)
+                    {
+                        audioSource.clip = peelSounds[Random.Range(0, peelSounds.Length - 1)];
+                        audioSource.Play();
+                    }
+                }
+            }
+            else
+            {
 
-						Destroy(gameObject);
-					}
-				}
-			}
-			//}
-		}
+                //if(isGracePeriodFinished)
+                //{
+                if (touchBeenReset)
+                {
+                    if (isMoving)
+                    {
+                        sendAnimation = true;
+                    }
+
+                    if (sendAnimation)
+                    {
+                        if (m_ReadyToSend)
+                        {
+                            m_ReadyToSend = false;
+
+
+                            audioSource.clip = sendSounds[Random.Range(0, sendSounds.Length - 1)];
+                            audioSource.Play();
+                        }
+
+                        transform.position += new Vector3(0.0f, m_TransitionSpeed * Time.deltaTime, 0.0f);
+
+                        if (transform.position.y > 20.0f)
+                        {
+                            m_SendingPotato = false;
+                            m_PeelAnimator.SetBool("RestartPeeling", true);
+                            m_PeelAnimator.SetBool("StartPeeling", true);
+
+                            m_clientComm.CreatePotato();
+
+                            Destroy(gameObject);
+                        }
+                    }
+                }
+                //}
+            }
+        }
+        else
+        {
+            float temp = m_SpawnCurve.Evaluate(1-(float)(m_SpawnTimer/m_SpawnTimerCurrent));
+            transform.localScale = new Vector3(temp,temp,temp);
+
+
+            m_SpawnTimer -= Time.deltaTime;
+
+            if (m_SpawnTimer <= 0.0f)
+            {
+                m_IsSpawning = false;
+            }
+
+
+        }
 	}
 
 	public void GetTouchMove()

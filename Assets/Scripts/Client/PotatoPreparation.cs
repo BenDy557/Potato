@@ -17,8 +17,16 @@ public class PotatoPreparation : MonoBehaviour {
     public float m_TransitionSpeed;
 	public ClientSQLComm m_clientComm;
 
-	public float gracePeriod = 0;
-	private bool isGracePeriodFinished = false;
+	private AudioSource audioSource = null;
+
+
+	[SerializeField] private AudioClip[] spawnSounds;
+	[SerializeField] private AudioClip[] peelSounds;
+	[SerializeField] private AudioClip[] sendSounds;
+
+	private bool isMoving = false;
+	private bool sendAnimation = false;
+	private bool touchBeenReset = false;
 
 	// Use this for initialization
 	void Start () {
@@ -31,77 +39,104 @@ public class PotatoPreparation : MonoBehaviour {
         m_PeelAnimator.speed = 0;
 
 		m_clientComm = GameObject.FindGameObjectWithTag ("Client").GetComponent<ClientSQLComm>();
+
+		m_PeelAnimator.GetBehaviour<TriggerEndOfPeel>().script = this;
+
+		audioSource = gameObject.AddComponent<AudioSource>();
+		audioSource.clip = spawnSounds[ Random.Range(0, spawnSounds.Length-1)];
+		audioSource.Play(   );
 	}
 	
 	// Update is called once per frame
 	private void Update () 
 	{	
+		GetTouchMove();
+
+		if( m_SendingPotato && Input.touches.Length == 0 )
+		{
+			touchBeenReset = true;
+		}
+
 		if (!m_SendingPotato) 
 		{
 			m_PeelAnimator.SetBool("RestartPeeling", false);
 
-			Touch[] touches = Input.touches;
-
-			bool isMoving = false;
-
-			for (int i = 0; i < touches.Length; i++) 
-			{
-				if (touches[i].phase == TouchPhase.Moved && touches[i].deltaPosition.magnitude > 0.1f) 
-				{
-					isMoving = true;
-					break;
-				}
-			}
 
 			if (isMoving) 
 			{
 				m_PeelAnimator.speed = 1;
 
-
-
-				if (m_PeelAnimator.GetCurrentAnimatorStateInfo (0).IsName ("Peel9") && m_PeelAnimator.GetCurrentAnimatorStateInfo (0).normalizedTime > 0.90) 
+				if(!audioSource.isPlaying)
 				{
-					m_SendingPotato = true;
-					m_ReadyToSend = true;
-
-					m_PeelAnimator.SetBool("StartPeeling", false);
-
-					StartCoroutine(WaitForGracePeriod());
-
-					m_UnpeeledPotato.SetActive(false);
+					audioSource.clip = peelSounds[ Random.Range(0, peelSounds.Length-1) ];
+					audioSource.Play(  );
 				}
-			} else 
-			{
-				m_PeelAnimator.speed = 0;
 			}
 		} else 
 		{
-			if(isGracePeriodFinished)
+
+			//if(isGracePeriodFinished)
+			//{
+			if(touchBeenReset)
 			{
-				if(m_ReadyToSend)
+				if(isMoving)
 				{
-					m_ReadyToSend = false;
-
-					m_clientComm.CreatePotato();
+					sendAnimation = true;
 				}
-				
-				transform.position += new Vector3(0.0f, m_TransitionSpeed * Time.deltaTime, 0.0f);
-				
-				if (transform.position.y > 20.0f)
+
+				if(sendAnimation)
 				{
-					m_SendingPotato = false;
-					m_PeelAnimator.SetBool("RestartPeeling", true);
-					m_PeelAnimator.SetBool("StartPeeling", true);
+					if(m_ReadyToSend)
+					{
+						m_ReadyToSend = false;
 
-					Destroy(gameObject);
+
+						audioSource.clip = sendSounds[ Random.Range(0, sendSounds.Length-1) ];
+						audioSource.Play(  );
+					}
+					
+					transform.position += new Vector3(0.0f, m_TransitionSpeed * Time.deltaTime, 0.0f);
+					
+					if (transform.position.y > 20.0f)
+					{
+						m_SendingPotato = false;
+						m_PeelAnimator.SetBool("RestartPeeling", true);
+						m_PeelAnimator.SetBool("StartPeeling", true);
+
+						m_clientComm.CreatePotato();
+
+						Destroy(gameObject);
+					}
 				}
+			}
+			//}
+		}
+	}
+
+	public void GetTouchMove()
+	{
+		Touch[] touches = Input.touches;
+		
+		isMoving = false;
+		
+		for (int i = 0; i < touches.Length; i++) 
+		{
+			if (touches[i].phase == TouchPhase.Moved && touches[i].deltaPosition.magnitude > 2f) 
+			{
+				isMoving = true;
+				break;
 			}
 		}
 	}
 
-	private IEnumerator WaitForGracePeriod()
+	// Called From The Animator State Behaviour
+	public void SendPotato()
 	{
-		yield return new WaitForSeconds (gracePeriod);
-		isGracePeriodFinished = true;
+		m_SendingPotato = true;
+		m_ReadyToSend = true;
+
+		m_PeelAnimator.SetBool("StartPeeling", false);
+
+		m_UnpeeledPotato.SetActive(false);
 	}
 }

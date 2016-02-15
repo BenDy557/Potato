@@ -5,6 +5,14 @@ using System.IO;
 
 public class ServerSQLComm : MonoBehaviour 
 {
+	[SerializeField] private bool infinitePotatos = false;
+
+	private void Start()
+	{
+		if(infinitePotatos)
+			StartCoroutine(SpawnPotatoes());
+	}
+
 	private void Update()
 	{
 		if(Input.GetKeyDown(KeyCode.Alpha1))
@@ -41,5 +49,13 @@ public class ServerSQLComm : MonoBehaviour
 		}
 	}
 
-	//private IEnumerator GetStuff();
+	private IEnumerator SpawnPotatoes()
+	{
+		while(true)
+		{
+			HttpWebRequest webRequestSend = (HttpWebRequest)WebRequest.Create(@"http://www.potato.azurelit.com/IncrementPotato.php");
+			
+			webRequestSend.GetResponse().GetResponseStream();
+		}
+	}
 }

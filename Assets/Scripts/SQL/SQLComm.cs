@@ -18,7 +18,7 @@ public class SQLComm : MonoBehaviour
 	private int currentPotatoCount = 0;
 	private Vector3 limits;
 
-	private int webPotatoCount = 0;
+	private long webPotatoCount = 0;
 	
 	/// <summary>
 	/// Socket Initialization Place Any Other Code Before the Socket Initialization

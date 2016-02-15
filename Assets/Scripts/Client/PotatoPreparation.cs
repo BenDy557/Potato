@@ -100,7 +100,10 @@ public class PotatoPreparation : MonoBehaviour {
                     {
                         if (m_ReadyToSend)
                         {
-                            m_ReadyToSend = false;
+							Handheld.Vibrate();
+
+							
+							m_ReadyToSend = false;
 
 
                             audioSource.clip = sendSounds[Random.Range(0, sendSounds.Length - 1)];
@@ -111,6 +114,7 @@ public class PotatoPreparation : MonoBehaviour {
 
                         if (transform.position.y > 20.0f)
                         {
+
                             m_SendingPotato = false;
                             m_PeelAnimator.SetBool("RestartPeeling", true);
                             m_PeelAnimator.SetBool("StartPeeling", true);

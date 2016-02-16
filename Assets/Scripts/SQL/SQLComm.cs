@@ -6,6 +6,7 @@ using System.Net;
 using System.Collections.Generic;
 using System.Collections;
 using System.IO;
+using System.Threading;
 
 public enum EConnectionBehaviour { None, Server, Client }
 
@@ -18,8 +19,10 @@ public class SQLComm : MonoBehaviour
 	private int currentPotatoCount = 0;
 	private Vector3 limits;
 
-	private long webPotatoCount = 0;
-	
+	public static long webPotatoCount = 0;
+
+	ThreadedWorker worker;
+	Thread readFromDB;
 	/// <summary>
 	/// Socket Initialization Place Any Other Code Before the Socket Initialization
 	/// </summary>
@@ -31,7 +34,11 @@ public class SQLComm : MonoBehaviour
 		
 		AudioManager.Instance.PlaySound(EAudioPlayType.BGM, audioClip);
 
-		StartCoroutine(UpdatePotatoCounter());
+		worker = new ThreadedWorker();
+		readFromDB = new Thread(new ThreadStart(worker.Run));
+
+		readFromDB.Start();
+		//StartCoroutine(UpdatePotatoCounter());
 	}
 	
 	/// <summary>
@@ -57,22 +64,44 @@ public class SQLComm : MonoBehaviour
 			}
 	}
 
+	private void OnApplicationExit()
+	{
+		readFromDB.Abort();
+		readFromDB.Join();
+	}
+
 	public void UpdateSpawnLimits( float y )
 	{
 		limits.y = y;
 	}
 
-	private IEnumerator UpdatePotatoCounter()
-	{
-		WaitForSeconds waitTimer = new WaitForSeconds(0.5f);
-		while(true)
-		{
-			HttpWebRequest webRequestCheck = (HttpWebRequest)WebRequest.Create(@"http://www.potato.azurelit.com/GetPotatoCount.php");
-			
-			StreamReader reader = new StreamReader(webRequestCheck.GetResponse().GetResponseStream());  
-			webPotatoCount = int.Parse(reader.ReadToEnd());
+//	private IEnumerator UpdatePotatoCounter()
+//	{
+//		WaitForSeconds waitTimer = new WaitForSeconds(0.5f);
+//		while(true)
+//		{
+//			HttpWebRequest webRequestCheck = (HttpWebRequest)WebRequest.Create(@"http://www.potato.azurelit.com/GetPotatoCount.php");
+//			
+//			StreamReader reader = new StreamReader(webRequestCheck.GetResponse().GetResponseStream());  
+//			webPotatoCount = int.Parse(reader.ReadToEnd());
+//
+//			yield return waitTimer;
+//		}
+//	}
 
-			yield return waitTimer;
+	private class ThreadedWorker
+	{
+		public void Run()
+		{
+			while(true)
+			{
+				HttpWebRequest webRequestCheck = (HttpWebRequest)WebRequest.Create(@"http://www.potato.azurelit.com/GetPotatoCount.php");
+				
+				StreamReader reader = new StreamReader(webRequestCheck.GetResponse().GetResponseStream());  
+				webPotatoCount = int.Parse(reader.ReadToEnd());
+
+				Thread.Sleep (500);
+			}
 		}
 	}
 }

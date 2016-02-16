@@ -1,0 +1,33 @@
+Mono path[0] = 'M:/Jams/GlobalGameJam2016/Potato/FinalBuilds/Server - Windows (x86)/Server_Data/Managed'
+Mono path[1] = 'M:/Jams/GlobalGameJam2016/Potato/FinalBuilds/Server - Windows (x86)/Server_Data/Mono'
+Mono config path = 'M:/Jams/GlobalGameJam2016/Potato/FinalBuilds/Server - Windows (x86)/Server_Data/Mono/etc'
+PlayerConnection initialized from M:/Jams/GlobalGameJam2016/Potato/FinalBuilds/Server - Windows (x86)/Server_Data (debug = 0)
+PlayerConnection initialized network socket : 0.0.0.0 55487
+Multi-casting "[IP] 193.60.175.156 [Port] 55487 [Flags] 2 [Guid] 2143741008 [EditorId] 3340441585 [Version] 1048832 [Id] WindowsPlayer(MC10790) [Debug] 0" to [225.0.0.222:54997]...
+PlayerConnection already initialized - listening to [193.60.175.156:55487]
+Initialize engine version: 5.1.1f1 (2046fc06d4d8)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: NVIDIA GeForce GT 640  (ID=0xfc1)
+    Vendor:   NVIDIA
+    VRAM:     3072 MB
+Begin MonoManager ReloadAssembly
+Platform assembly: M:\Jams\GlobalGameJam2016\Potato\FinalBuilds\Server - Windows (x86)\Server_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading M:\Jams\GlobalGameJam2016\Potato\FinalBuilds\Server - Windows (x86)\Server_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: M:\Jams\GlobalGameJam2016\Potato\FinalBuilds\Server - Windows (x86)\Server_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading M:\Jams\GlobalGameJam2016\Potato\FinalBuilds\Server - Windows (x86)\Server_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: M:\Jams\GlobalGameJam2016\Potato\FinalBuilds\Server - Windows (x86)\Server_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading M:\Jams\GlobalGameJam2016\Potato\FinalBuilds\Server - Windows (x86)\Server_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: M:\Jams\GlobalGameJam2016\Potato\FinalBuilds\Server - Windows (x86)\Server_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading M:\Jams\GlobalGameJam2016\Potato\FinalBuilds\Server - Windows (x86)\Server_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: M:\Jams\GlobalGameJam2016\Potato\FinalBuilds\Server - Windows (x86)\Server_Data\Managed\UnityEngine.Analytics.dll (this message is harmless)
+Loading M:\Jams\GlobalGameJam2016\Potato\FinalBuilds\Server - Windows (x86)\Server_Data\Managed\UnityEngine.Analytics.dll into Unity Child Domain
+- Completed reload, in  0.713 seconds
+desktop: 1920x1200 59Hz; virtual: 1920x1200 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+Platform assembly: M:\Jams\GlobalGameJam2016\Potato\FinalBuilds\Server - Windows (x86)\Server_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: M:\Jams\GlobalGameJam2016\Potato\FinalBuilds\Server - Windows (x86)\Server_Data\Managed\System.dll (this message is harmless)
+Platform assembly: M:\Jams\GlobalGameJam2016\Potato\FinalBuilds\Server - Windows (x86)\Server_Data\Managed\Mono.Security.dll (this message is harmless)
